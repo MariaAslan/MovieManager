@@ -16,7 +16,7 @@ $genres = $statement->fetchAll(PDO::FETCH_ASSOC);
 $statement->closeCursor();
 
 /* Get selected movie */
-$query = 'SELECT movieID, title, director, genreID, releaseYear, duration
+$query = 'SELECT movieID, title, director, genreID, releaseYear, duration,imageName
           FROM movies
           WHERE movieID = :movieID';
 
@@ -39,6 +39,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $genreID = filter_input(INPUT_POST, 'genreID', FILTER_VALIDATE_INT);
     $releaseYear = filter_input(INPUT_POST, 'releaseYear', FILTER_VALIDATE_INT);
     $duration = filter_input(INPUT_POST, 'duration', FILTER_VALIDATE_INT);
+    $imageName = $movie['imageName'] ?: 'placeholder_100.jpg';
+
+if (
+    isset($_FILES['image']) &&
+    $_FILES['image']['error'] === UPLOAD_ERR_OK
+) {
+    $extension = strtolower(
+        pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION)
+    );
+
+    $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+
+    if (in_array($extension, $allowedExtensions, true)) {
+        $imageName = uniqid('movie_', true) . '.' . $extension;
+
+        move_uploaded_file(
+            $_FILES['image']['tmp_name'],
+            __DIR__ . '/images/' . $imageName
+        );
+    }
+}
 
     if (
         $title === '' ||
@@ -60,7 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                       director = :director,
                       genreID = :genreID,
                       releaseYear = :releaseYear,
-                      duration = :duration
+                      duration = :duration,
+imageName = :imageName
                   WHERE movieID = :movieID';
 
         $statement = $db->prepare($query);
@@ -69,6 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $statement->bindValue(':genreID', $genreID, PDO::PARAM_INT);
         $statement->bindValue(':releaseYear', $releaseYear, PDO::PARAM_INT);
         $statement->bindValue(':duration', $duration, PDO::PARAM_INT);
+        $statement->bindValue(':imageName', $imageName);
         $statement->bindValue(':movieID', $movieID, PDO::PARAM_INT);
         $statement->execute();
         $statement->closeCursor();
@@ -99,7 +122,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </p>
     <?php endif; ?>
 
-    <form action="edit_movie.php?id=<?php echo $movieID; ?>" method="post">
+    <form action="edit_movie.php?id=<?php echo $movieID; ?>"
+      method="post"
+      enctype="multipart/form-data">
         <label for="title">Title:</label>
         <input
             type="text"
@@ -156,12 +181,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             value="<?php echo htmlspecialchars($movie['duration']); ?>"
             required
         >
+<label for="image">Movie Poster:</label>
 
+<img
+    id="imagePreview"
+    src="images/<?php echo htmlspecialchars(
+        $movie['imageName'] ?: 'placeholder_100.jpg'
+    ); ?>"
+    alt="Movie poster preview"
+    width="120"
+>
+
+<input
+    type="file"
+    id="image"
+    name="image"
+    accept="image/*"
+>
         <button type="submit">Update Movie</button>
         <a href="index.php">Cancel</a>
     </form>
 
     <?php include('footer.php'); ?>
 </main>
+<script>
+    const imageInput = document.getElementById('image');
+    const imagePreview = document.getElementById('imagePreview');
+
+    imageInput.addEventListener('change', function () {
+        const selectedFile = this.files[0];
+
+        if (selectedFile) {
+            imagePreview.src = URL.createObjectURL(selectedFile);
+        }
+    });
+</script>
 </body>
 </html>

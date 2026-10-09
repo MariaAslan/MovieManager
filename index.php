@@ -1,7 +1,7 @@
 <?php
 require_once('database.php');
-
 $query = 'SELECT movies.movieID,
+                 movies.imageName,
                  movies.title,
                  movies.director,
                  genres.genreName,
@@ -38,6 +38,7 @@ $statement->closeCursor();
 
     <table>
         <tr>
+            <th>Poster</th>
             <th>Title</th>
             <th>Director</th>
             <th>Genre</th>
@@ -48,6 +49,15 @@ $statement->closeCursor();
 
         <?php foreach ($movies as $movie): ?>
             <tr>
+                <td>
+    <img
+        src="images/<?php echo htmlspecialchars(
+            $movie['imageName'] ?: 'placeholder_100.jpg'
+        ); ?>"
+        alt="<?php echo htmlspecialchars($movie['title']); ?> poster"
+        width="80"
+    >
+</td>
                 <td><?php echo htmlspecialchars($movie['title']); ?></td>
 
                 <td>
@@ -67,9 +77,13 @@ $statement->closeCursor();
                 </td>
 
                 <td>
-                    <a href="edit_movie.php?id=<?php
-                        echo $movie['movieID'];
-                    ?>">Edit</a>
+    <a href="view_movie.php?id=<?php echo $movie['movieID']; ?>">
+        Details
+    </a>
+
+    <a href="edit_movie.php?id=<?php
+        echo $movie['movieID'];
+    ?>">Edit</a>
 
                     <form
                         action="delete_movie.php"
