@@ -1,6 +1,6 @@
 <?php
 require_once('database.php');
-
+require_once('auth.php');
 $query = 'SELECT genreID, genreName FROM genres ORDER BY genreName';
 $statement = $db->prepare($query);
 $statement->execute();

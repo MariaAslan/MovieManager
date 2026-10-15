@@ -1,6 +1,6 @@
 <?php
 require_once('database.php');
-
+require_once('auth.php');
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $movieID = filter_input(INPUT_POST, 'movieID', FILTER_VALIDATE_INT);
 

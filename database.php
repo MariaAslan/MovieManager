@@ -1,5 +1,9 @@
+
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 
 $dsn = 'mysql:host=localhost;dbname=movie_manager;charset=utf8mb4';
 $username = 'root';

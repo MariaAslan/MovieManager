@@ -1,6 +1,6 @@
 <?php
 require_once('database.php');
-
+require_once('auth.php');
 $movieID = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
 if (!$movieID) {

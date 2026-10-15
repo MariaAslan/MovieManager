@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Oct 09, 2026 at 02:30 AM
+-- Generation Time: Oct 15, 2026 at 02:09 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.1.17
 
@@ -66,6 +66,21 @@ INSERT INTO `movies` (`movieID`, `title`, `director`, `genreID`, `releaseYear`, 
 (1, 'The Lion King', 'Roger Allers', 1, 1994, 88, 'movie_6ac833d23826f1.81852744.jpeg'),
 (2, 'Finding Nemo', 'Andrew Stanton', 1, 2003, 100, 'movie_6ac833acf26651.40264961.png');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `registrations`
+--
+
+CREATE TABLE `registrations` (
+  `userID` int(11) NOT NULL,
+  `userName` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `emailAddress` varchar(255) NOT NULL,
+  `failedAttempts` int(11) NOT NULL DEFAULT 0,
+  `lastFailedLogin` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
 --
 -- Indexes for dumped tables
 --
@@ -85,6 +100,13 @@ ALTER TABLE `movies`
   ADD KEY `genreID` (`genreID`);
 
 --
+-- Indexes for table `registrations`
+--
+ALTER TABLE `registrations`
+  ADD PRIMARY KEY (`userID`),
+  ADD UNIQUE KEY `userName` (`userName`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -99,6 +121,12 @@ ALTER TABLE `genres`
 --
 ALTER TABLE `movies`
   MODIFY `movieID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `registrations`
+--
+ALTER TABLE `registrations`
+  MODIFY `userID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables

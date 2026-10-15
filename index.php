@@ -1,5 +1,6 @@
 <?php
 require_once('database.php');
+require_once('auth.php');
 $query = 'SELECT movies.movieID,
                  movies.imageName,
                  movies.title,
